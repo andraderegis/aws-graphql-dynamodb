@@ -1,0 +1,17 @@
+[
+  {
+    "id": "01",
+    "name": "swordman",
+    "value": 99
+  },
+  {
+    "id": "02",
+    "name": "strength",
+    "value": 90
+  },
+  {
+    "id": "03",
+    "name": "dexterity",
+    "value": 90
+  }
+]
