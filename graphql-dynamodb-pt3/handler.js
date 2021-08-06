@@ -2,95 +2,98 @@
 
 const { v4: uuid } = require('uuid');
 
-const { ApolloServer, gql } = require('apollo-server-lambda');
-
-const HeroesFactory = require('./src/core/factories/heroes-factory');
-const SkillsFactory = require('./src/core/factories/skills-factory');
+const { ApolloServer } = require('apollo-server-lambda');
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core');
 
 const setupDynamoDBClient = require('./src/core/utils/setup-dynamo-db');
 setupDynamoDBClient();
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
+const HeroesFactory = require('./src/core/factories/heroes-factory');
+const SkillsFactory = require('./src/core/factories/skills-factory');
 
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-  },
-};
+const IS_LOCAL = process.env.IS_LOCAL;
+
+const schema = require('./src/graphql');
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+  schema,
+  //getting schema info
+  introspection: IS_LOCAL,
+  //fronted to test
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
+  formatError(error) {
+    console.error('[Global error logger]', error);
+
+    return error;
+  },
+  formatResponse(response) {
+    console.log('[Global logger]', response);
+
+    return response;
+  }
+})
 
 exports.handler = server.createHandler({
   expressGetMiddlewareOptions: {
     cors: {
-      origin: '*',
-      credentials: true,
+      origin: '*'
     }
   },
 });
 
-async function main() {
-  console.log('creating factories...')
+// async function main() {
+//   console.log('creating factories...')
 
-  const skillsFactory = await SkillsFactory.createInstance();
-  const heroesFactory = await HeroesFactory.createInstance();
+//   const skillsFactory = await SkillsFactory.createInstance();
+//   const heroesFactory = await HeroesFactory.createInstance();
 
-  console.log('inserting skill item');
+//   console.log('inserting skill item');
 
-  const skillId = `${uuid()}`;
-  await skillsFactory.create({
-    id: skillId,
-    name: 'mage',
-    value: 99
-  });
+//   const skillId = `${uuid()}`;
+//   await skillsFactory.create({
+//     id: skillId,
+//     name: 'mage',
+//     value: 99
+//   });
 
-  console.log('getting skill item');
-  const skillItem = await skillsFactory.findOne(skillId);
-  console.log({ skillItem });
+//   console.log('getting skill item');
+//   const skillItem = await skillsFactory.findOne(skillId);
+//   console.log({ skillItem });
 
-  const allSkills = await skillsFactory.findAll();
-  console.log({ allSkills });
+//   const allSkills = await skillsFactory.findAll();
+//   console.log({ allSkills });
 
-  console.log('\n----------------\n');
+//   console.log('\n----------------\n');
 
-  console.log('inserting hero item');
-  const heroId = `${uuid()}`;
-  await heroesFactory.create({
-    id: heroId,
-    name: 'Aerith Gainsborough',
-    skills: [
-      skillId
-    ]
-  });
+//   console.log('inserting hero item');
+//   const heroId = `${uuid()}`;
+//   await heroesFactory.create({
+//     id: heroId,
+//     name: 'Aerith Gainsborough',
+//     skills: [
+//       skillId
+//     ]
+//   });
 
-  const hero = await heroesFactory.findOne(heroId);
-  console.log({ hero });
+//   const hero = await heroesFactory.findOne(heroId);
+//   console.log({ hero });
 
-  const allHeroes = await heroesFactory.findAll();
-  console.log({ allHeroes });
+//   const allHeroes = await heroesFactory.findAll();
+//   console.log({ allHeroes });
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      hero: {
-        hero,
-        allHeroes
-      },
-      skill: {
-        skillItem,
-        allSkills
-      }
-    })
-  }
-}
+//   return {
+//     statusCode: 200,
+//     body: JSON.stringify({
+//       hero: {
+//         hero,
+//         allHeroes
+//       },
+//       skill: {
+//         skillItem,
+//         allSkills
+//       }
+//     })
+//   }
+// }
 
-module.exports.test = main;
+// module.exports.test = main;
