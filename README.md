@@ -5,12 +5,10 @@
 **o banco de dados DynamoDB. A implementação foi dividia em quatro partes,**
 **sendo a implementação final contida na pasta *graphql-dynamodb-pt4***
 <br>
-<br>
 **Três padrões de projeto foram utilizados e eles são**:
 - **Repository**
 - **Factory**
 - **Dependency Injection**
-<br>
 <br>
 
 **As ferramentas utilizadas para o desenvolvimento são:**
@@ -30,7 +28,11 @@ docker-compose up -d localstack
 ```
 ## Yarn
 **Uma vez que o container esteja executando:**
-
+- **Instale as dependências do projeto**
+```
+yarn install
+```
+- **Startup do projeto**
 ```
 yarn start
 ```
