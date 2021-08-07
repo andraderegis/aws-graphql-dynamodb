@@ -36,6 +36,16 @@ yarn install
 ```
 yarn start
 ```
-
-
+# Implantação
+## AWS
+**Antes de realizar o deploy na AWS, verifique as configurações da região e perfil utilizados**
+**na AWS no arquivo serverless.yml, dentro da propriedade provider**
+- **Deploy do projeto**
+```
+sls deploy
+```
+- **Remoção do deploy**
+```
+sls remove
+```
 
