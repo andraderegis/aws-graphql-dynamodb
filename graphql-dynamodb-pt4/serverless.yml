@@ -6,7 +6,7 @@ provider:
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
   region: "us-east-1"
-  # profile: node-serveless
+  profile: node-serveless
   stage: ${opt:stage, "dev"}
   environment:
     HEROES_TABLE: Heroes
@@ -59,12 +59,6 @@ custom:
             sources: [./seed/skills.json]
 
 functions:
-  test:
-    handler: handler.test
-    events:
-      - http:
-          path: test
-          method: any
   graphql:
     handler: handler.handler
     events:
